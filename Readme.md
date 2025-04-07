@@ -2,7 +2,6 @@ Team Performance Tracker
 
 ![Template Preview](image/DASHBOARD.png)
 
-Live Preview
 🔗 [Live Demo](https://mrkweb15.github.io/team-dashboard-template/)
 
 A free, modern, and customizable HTML Dashboard for Team Performance tracker template for team, developers, designers, startups.  
