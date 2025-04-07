@@ -1,6 +1,6 @@
 # 🚀 [Your Template Name]  
 
-![Template Preview](image\DASHBOARD.png) *Replace with your actual image file and adjust the alt text*  
+![Template Preview](image/DASHBOARD.png) *Replace with your actual image file and adjust the alt text*  
 
 A free, modern, and customizable HTML Dashboard for Team Performance tracker template for team, developers, designers, startups.  
 
