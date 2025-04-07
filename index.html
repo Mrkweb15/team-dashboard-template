@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dark Mode Team Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #6c63ff;
+      --secondary-color: #564dff;
+      --accent-color: #7b7cff;
+      --light-accent: #8e9eff;
+      --dark-bg: #121212;
+      --darker-bg: #0d0d0d;
+      --sidebar-bg: #1a1a2e;
+      --card-bg: #1e1e2e;
+      --card-hover: #252538;
+      --text-dark: #e0e0e0;
+      --text-light: #ffffff;
+      --text-muted: #a0a0a0;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --danger-color: #f44336;
+      --info-color: #00bcd4;
+      --border-color: #2d2d42;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-dark);
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      background-color: var(--dark-bg);
+    }
+
+    .navbar {
+      height: 70px;
+      z-index: 999;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .main-section {
+      display: flex;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 280px;
+      background-color: var(--sidebar-bg);
+      color: var(--text-light);
+      padding-top: 1.5rem;
+      flex-shrink: 0;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar a {
+      color: var(--text-light);
+      padding: 12px 25px;
+      display: block;
+      text-decoration: none;
+      margin: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(108, 99, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .sidebar a.active {
+      background-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+    }
+
+    .main-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      background-color: var(--dark-bg);
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 22px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+    }
+
+    /* Cards */
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      background-color: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+      background-color: var(--card-hover);
+    }
+
+    .card-header {
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      background-color: rgba(30, 30, 46, 0.8);
+      color: var(--text-light);
+    }
+
+    /* Team cards */
+    .team-card {
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+
+    .team-card:hover {
+      transform: scale(1.03);
+    }
+
+    .team-card.bg-primary {
+      background-color: var(--primary-color) !important;
+      border-left-color: var(--light-accent);
+    }
+
+    .team-card.bg-success {
+      background-color: var(--success-color) !important;
+      border-left-color: #81c784;
+    }
+
+    .team-card.bg-warning {
+      background-color: var(--warning-color) !important;
+      border-left-color: #ffb74d;
+    }
+
+    .team-card.bg-danger {
+      background-color: var(--danger-color) !important;
+      border-left-color: #e57373;
+    }
+
+    /* Accordion */
+    .accordion {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .accordion-button {
+      font-weight: 600;
+      background-color: var(--card-bg);
+      color: var(--text-light);
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: rgba(108, 99, 255, 0.2);
+      color: var(--light-accent);
+      box-shadow: none;
+    }
+
+    .accordion-button:focus {
+      box-shadow: none;
+      border-color: rgba(108, 99, 255, 0.3);
+      color: #1a1a2e;
+    }
+
+    .accordion-body {
+      background-color: var(--card-bg);
+      color:  white;
+      border-bottom: solid 1px black;
+    }
+
+    /* Table */
+    .table {
+      border-radius: 12px;
+      overflow: hidden;
+      color: var(--text-dark);
+    }
+
+    .table thead th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 500;
+      border-bottom: none;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(108, 99, 255, 0.1);
+    }
+
+    .table td, .table th {
+      border-top: 1px solid var(--border-color);
+      padding: 12px 15px;
+    }
+
+    /* Status indicators */
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-online {
+      background-color: var(--success-color);
+      box-shadow: 0 0 8px var(--success-color);
+    }
+
+    .status-offline {
+      background-color: #9e9e9e;
+    }
+
+    .status-busy {
+      background-color: var(--warning-color);
+      box-shadow: 0 0 8px var(--warning-color);
+    }
+
+    /* Task list icons */
+    .task-list li {
+      position: relative;
+      padding-left: 25px;
+      margin-bottom: 8px;
+    }
+
+    .task-list li:before {
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 18px;
+    }
+
+    .task-list li:nth-child(1):before {
+      content: "✅";
+    }
+
+    .task-list li:nth-child(2):before {
+      content: "✅";
+    }
+
+    .task-list li:nth-child(3):before {
+      content: "❌";
+    }
+
+    /* Progress bars */
+    .progress {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .progress-bar {
+      border-radius: 10px;
+    }
+
+    /* Form controls */
+    .form-control, .form-select {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+
+    .form-control:focus, .form-select:focus {
+      background-color: var(--card-bg);
+      color: var(--text-dark);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+    }
+
+    .dropdown-menu {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    .dropdown-item {
+      color: var(--text-dark);
+    }
+
+    .dropdown-item:hover {
+      background-color: rgba(108, 99, 255, 0.2);
+      color: var(--text-light);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        z-index: 1000;
+        height: 100%;
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark px-4">
+      <a class="navbar-brand logo" href="#">
+        <span class="logo-icon">🚀</span>
+        <span>MyTeam Dashboard</span>
+      </a>
+    </nav>
+
+    <!-- Main Content + Sidebar -->
+    <div class="main-section">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <a href="#" class="active">🏠 Dashboard</a>
+        <a href="#">📊 Analytics</a>
+        <a href="#">👥 Team Members</a>
+        <a href="#">🗂 Projects</a>
+        <a href="#">📅 Calendar</a>
+        <a href="#">📝 Tasks</a>
+        <a href="#">⚙️ Settings</a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <h2 class="mb-4 fw-bold" style="color: var(--primary-color);">Team Performance Dashboard</h2>
+
+        <!-- Team Cards -->
+        <div class="row g-4">
+          <div class="col-md-3">
+            <div class="card text-white team-card bg-primary">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h5 class="card-title">Alveyra</h5>
+                    <p class="card-text mb-1">Completed: 20 tasks</p>
+                    <p class="card-text">Performance: 95%</p>
+                  </div>
+                  <span class="status-indicator status-online"></span>
+                </div>
+                <div class="progress mt-2" style="height: 6px; background-color: rgba(255,255,255,0.3);">
+                  <div class="progress-bar bg-white" style="width: 95%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white team-card bg-success">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h5 class="card-title">Concepcion</h5>
+                    <p class="card-text mb-1">Completed: 18 tasks</p>
+                    <p class="card-text">Performance: 90%</p>
+                  </div>
+                  <span class="status-indicator status-online"></span>
+                </div>
+                <div class="progress mt-2" style="height: 6px; background-color: rgba(255,255,255,0.3);">
+                  <div class="progress-bar bg-white" style="width: 90%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white team-card bg-warning">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h5 class="card-title">Evangelista</h5>
+                    <p class="card-text mb-1">Completed: 15 tasks</p>
+                    <p class="card-text">Performance: 80%</p>
+                  </div>
+                  <span class="status-indicator status-online"></span>
+                </div>
+                <div class="progress mt-2" style="height: 6px; background-color: rgba(255,255,255,0.3);">
+                  <div class="progress-bar bg-white" style="width: 80%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white team-card bg-danger">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h5 class="card-title">Esquivel</h5>
+                    <p class="card-text mb-1">Completed: 12 tasks</p>
+                    <p class="card-text">Performance: 70%</p>
+                  </div>
+                  <span class="status-indicator status-online"></span>
+                </div>
+                <div class="progress mt-2" style="height: 6px; background-color: rgba(255,255,255,0.3);">
+                  <div class="progress-bar bg-white" style="width: 70%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two Column Layout for Sales Chart and Stack Table -->
+        <div class="row mt-4 g-4">
+          <!-- Sales Chart -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" style="color: var(--primary-color);">Performance Overview</h5>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    This Quarter
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">This Week</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="salesChart" height="250"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stack Table with DataTable -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header">
+                <h5 class="mb-0" style="color: var(--primary-color);">Project Progress</h5>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover mb-0" id="stackTable">
+                  <thead>
+                    <tr>
+                      <th>Module</th>
+                      <th>Technology</th>
+                      <th>Progress</th>
+                      <th>Lead</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Introduction</td>
+                      <td>Microsoft Word, Grammarly</td>
+                      <td>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-primary" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">85%</small>
+                      </td>
+                      <td>Alveyra</td>
+                    </tr>
+                    <tr>
+                      <td>Objectives</td>
+                      <td>Lucidchart, Canva</td>
+                      <td>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-primary" style="width: 70%"></div>
+                        </div>
+                        <small class="text-muted">70%</small>
+                      </td>
+                      <td>Concepcion</td>
+                    </tr>
+                    <tr>
+                      <td>Literature Review</td>
+                      <td>Google Scholar, Mendeley</td>
+                      <td>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-primary" style="width: 65%"></div>
+                        </div>
+                        <small class="text-muted">65%</small>
+                      </td>
+                      <td>Evangelista</td>
+                    </tr>
+                    <tr>
+                      <td>Software Development</td>
+                      <td>PHP, MySQL, Bootstrap</td>
+                      <td>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-primary" style="width: 50%"></div>
+                        </div>
+                        <small class="text-muted">50%</small>
+                      </td>
+                      <td>Esquivel</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            <div class="accordion mt-1" id="taskAccordion">
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                    <span class="status-indicator status-online me-2"></span>
+                    Esquivel's Tasks
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#taskAccordion">
+                  <div class="accordion-body pt-0">
+                    <ul class="task-list list-unstyled">
+                      <li>Design homepage UI</li>
+                      <li>Test responsive layout</li>
+                      <li>Fix navbar bug</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                    <span class="status-indicator status-online me-2"></span>
+                    Concepcion's Tasks
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#taskAccordion">
+                  <div class="accordion-body pt-0">
+                    <ul class="task-list list-unstyled">
+                      <li>Identify client needs</li>
+                      <li>Create software plan</li>
+                      <li>Submit reports</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                    <span class="status-indicator status-online me-2"></span>
+                    Evangelista's Tasks
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#taskAccordion">
+                  <div class="accordion-body pt-0">
+                    <ul class="task-list list-unstyled">
+                      <li>Identify client needs</li>
+                      <li>Create software plan</li>
+                      <li>Submit reports</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                    <span class="status-indicator status-online me-2"></span>
+                    Alveyra's Tasks
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#taskAccordion">
+                  <div class="accordion-body pt-0">
+                    <ul class="task-list list-unstyled">
+                      <li>Identify client needs</li>
+                      <li>Create software plan</li>
+                      <li>Submit reports</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Team Performance',
+          data: [1200, 1900, 3000, 2200, 2800, 3500],
+          fill: true,
+          borderColor: 'rgba(108, 99, 255, 1)',
+          backgroundColor: 'rgba(108, 99, 255, 0.2)',
+          tension: 0.4,
+          pointBackgroundColor: 'white',
+          pointBorderColor: 'rgba(108, 99, 255, 1)',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { 
+            display: true,
+            position: 'top',
+            labels: {
+              color: '#e0e0e0',
+              font: {
+                weight: '600'
+              }
+            }
+          },
+          tooltip: { 
+            mode: 'index', 
+            intersect: false,
+            backgroundColor: 'rgba(30, 30, 46, 0.9)',
+            titleFont: {
+              size: 14,
+              weight: 'bold'
+            },
+            bodyFont: {
+              size: 12
+            },
+            borderColor: 'rgba(108, 99, 255, 0.5)',
+            borderWidth: 1
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { 
+              display: true, 
+              text: 'Performance Score',
+              color: '#a0a0a0',
+              font: {
+                weight: '600'
+              }
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#a0a0a0'
+            }
+          },
+          x: {
+            title: { 
+              display: true, 
+              text: 'Month',
+              color: '#a0a0a0',
+              font: {
+                weight: '600'
+              }
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#a0a0a0'
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
